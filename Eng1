@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nilo Chat + Agentic Mode — Karyn Loreyne</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --dark: #1A1814;
+  --dark-cell: #201E1A;
+  --dark-grid: #333028;
+  --dark-border: #2E2C28;
+  --light: #F7F5F1;
+  --surface: #EEEAE4;
+  --border: #C8C2B8;
+  --text-primary: #1A1814;
+  --text-secondary: #5C5850;
+  --text-muted: #9C9488;
+  --dark-title: #F5F2ED;
+  --dark-subtitle: #E8E4DE;
+  --dark-body: #9C9488;
+  --dark-muted: #7A7770;
+  --dark-hint: #5C5850;
+  --font-display: 'DM Serif Display', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --wrap-bg: #E8E4DC;
+  --section-max: 900px;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--wrap-bg);
+  min-height: 100vh;
+}
+
+/* STICKY NAV */
+.top-nav {
+  position: fixed;
+  top: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 100;
+  background: rgba(26,24,20,0.85);
+  padding: 8px 16px;
+  border-radius: 24px;
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.top-nav span {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #5C5850;
+}
+.top-nav a {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #7A7770;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.top-nav a:hover { color: #C8C2B8; }
+.nav-dot { width: 3px; height: 3px; border-radius: 50%; background: #3E3C38; }
+
+/* WRAPPER */
+.wrapper {
+  max-width: calc(var(--section-max) + 6rem);
+  margin: 0 auto;
+  padding: 5rem 3rem 5rem;
+}
+
+/* CARD */
+.card {
+  border-radius: 24px;
+  overflow: hidden;
+  box-shadow: 0 4px 40px rgba(0,0,0,0.15);
+}
+
+/* SECTIONS */
+.section {
+  padding: 4rem 3.5rem;
+  position: relative;
+}
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(200,194,184,0.3), transparent);
+}
+.section-divider-dark {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(50,48,40,0.8), transparent);
+}
+
+.light { background: var(--light); }
+.dark  { background: var(--dark); }
+
+/* SLIDE LABEL */
+.section-label {
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(200,194,184,0.4);
+  margin-bottom: 2rem;
+}
+.dark .section-label { color: rgba(92,88,80,0.5); }
+
+/* TYPOGRAPHY */
+.ey-l { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.75rem; }
+.ey-d { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--dark-muted); margin-bottom: 0.75rem; }
+.tt-l { font-family: var(--font-display); font-size: 32px; font-weight: 400; color: var(--text-primary); line-height: 1.2; margin-bottom: 1.75rem; }
+.tt-d { font-family: var(--font-display); font-size: 32px; font-weight: 400; color: var(--dark-title); line-height: 1.2; margin-bottom: 1.75rem; }
+.rule-l { height: 0.5px; background: var(--border); margin: 1.25rem 0; }
+.rule-d { height: 0.5px; background: var(--dark-border); margin: 1.25rem 0; }
+.body-l { font-size: 14px; color: var(--text-secondary); line-height: 1.7; }
+.body-d { font-size: 14px; color: var(--dark-body); line-height: 1.7; }
+
+.ph-l { background: var(--surface); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--text-muted); border: 1px dashed var(--border); font-style: italic; }
+.ph-d { background: #222019; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #3E3C38; border: 1px dashed var(--dark-border); font-style: italic; }
+
+/* S1 OPENING */
+.s1-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+.s1-hero { font-family: var(--font-display); font-size: 44px; font-weight: 400; letter-spacing: -0.01em; line-height: 1.1; color: var(--text-primary); }
+.s1-hero em { font-style: italic; color: var(--text-muted); }
+.s1-meta { display: flex; gap: 2.5rem; margin-top: 1.75rem; }
+.s1-mi .lbl { font-size: 10px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-muted); }
+.s1-mi .val { font-size: 13px; font-weight: 500; color: var(--text-primary); margin-top: 4px; }
+
+/* S2 COMPANY */
+.s2-main { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 1.75rem; margin-bottom: 1.5rem; }
+.s2-what { padding: 1.5rem; background: var(--surface); border-radius: 12px; }
+.s2-wt { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.6rem; }
+.s2-wb { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+.s2-mods { display: flex; flex-direction: column; gap: 10px; }
+.s2-mod { display: grid; grid-template-columns: 10px 1fr; gap: 12px; align-items: start; }
+.s2-dot { width: 7px; height: 7px; border-radius: 50%; margin-top: 5px; flex-shrink: 0; }
+.s2-mt { font-size: 13px; font-weight: 500; color: var(--text-primary); }
+.s2-mb { font-size: 12px; color: var(--text-muted); line-height: 1.4; margin-top: 1px; }
+.s2-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); border-radius: 12px; overflow: hidden; margin-bottom: 1.5rem; }
+.s2-stat { background: var(--light); padding: 1.25rem 1.5rem; }
+.s2-sn { font-family: var(--font-display); font-size: 28px; font-weight: 400; color: var(--text-primary); line-height: 1; }
+.s2-sl { font-size: 10px; color: var(--text-muted); margin-top: 5px; text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.4; }
+.s2-callout { padding: 1.25rem 1.5rem; border-left: 2px solid var(--border); font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.s2-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.75rem; }
+.s2-tag { font-size: 11px; color: var(--text-secondary); padding: 4px 12px; border-radius: 20px; border: 0.5px solid var(--border); background: #FAFAF8; }
+
+/* S3 MARKET */
+.s3-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.5rem; }
+.s3-block { padding: 1.5rem; background: #222019; border-radius: 12px; }
+.s3-bt { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--dark-hint); margin-bottom: 0.6rem; }
+.s3-bb { font-size: 13px; color: var(--dark-body); line-height: 1.7; }
+.s3-hl { padding: 1.25rem 1.5rem; border-left: 2px solid var(--dark-hint); font-size: 14px; font-style: italic; color: #C8C2B8; line-height: 1.6; }
+
+/* S4 PRODUCT */
+.s4-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.s4-nodes { display: flex; flex-direction: column; gap: 10px; }
+.s4-node { padding: 14px 18px; border-radius: 12px; font-size: 13px; font-weight: 500; }
+.s4-biz { background: var(--surface); color: var(--text-secondary); border: 0.5px solid var(--border); }
+.s4-pro { background: #EFF4F9; color: #3A6A8B; border: 0.5px solid #C8D9E8; }
+.s4-pac { background: #F2F8F1; color: #3A6A4C; border: 0.5px solid #C4DEC0; }
+.s4-sub { font-size: 11px; font-weight: 400; color: var(--text-muted); margin-top: 4px; }
+.s4-arr { font-size: 12px; color: var(--border); text-align: center; padding: 3px 0; }
+
+/* S5 PROBLEM */
+.s5-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--dark-grid); border-radius: 12px; overflow: hidden; }
+.s5-cell { background: var(--dark-cell); padding: 1.75rem; }
+.s5-cn { font-size: 10px; font-weight: 500; color: var(--dark-hint); margin-bottom: 0.85rem; letter-spacing: 0.06em; }
+.s5-ct { font-size: 14px; font-weight: 500; color: var(--dark-subtitle); margin-bottom: 6px; }
+.s5-cb { font-size: 12px; color: var(--dark-body); line-height: 1.6; }
+.s5-cq { font-size: 12px; font-style: italic; color: var(--dark-muted); margin-top: 12px; border-top: 0.5px solid var(--dark-border); padding-top: 12px; line-height: 1.5; }
+
+/* S6 DISCOVERY */
+.s6-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; }
+.s6-quotes { display: flex; flex-direction: column; gap: 12px; }
+.s6-quote { padding: 1.5rem; background: var(--surface); border-radius: 12px; }
+.s6-qt { font-size: 13px; font-style: italic; color: var(--text-secondary); line-height: 1.7; }
+.s6-qa { font-size: 11px; color: var(--text-muted); margin-top: 8px; }
+.s6-ins { padding: 1.5rem; border-left: 2px solid var(--border); }
+.s6-it { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px; }
+.s6-ib { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+
+/* S7 PRINCIPLES */
+.dp-list { display: flex; flex-direction: column; gap: 1px; background: var(--dark-grid); border-radius: 12px; overflow: hidden; }
+.dp-item { display: grid; grid-template-columns: 32px 1fr 1fr; gap: 1.75rem; padding: 1.5rem 1.75rem; background: var(--dark-cell); align-items: start; }
+.dp-num { font-size: 11px; font-weight: 500; color: var(--dark-hint); padding-top: 2px; }
+.dp-title { font-size: 14px; font-weight: 500; color: var(--dark-subtitle); margin-bottom: 5px; line-height: 1.3; }
+.dp-origin { font-size: 11px; color: var(--dark-hint); font-style: italic; }
+.dp-body { font-size: 13px; color: var(--dark-body); line-height: 1.7; }
+
+/* S8 VALIDATION */
+.s8-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border-radius: 12px; overflow: hidden; }
+.s8-cell { background: var(--light); padding: 1.75rem; }
+.s8-tag { display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; padding: 4px 12px; background: var(--surface); color: var(--text-muted); border-radius: 20px; margin-bottom: 0.85rem; }
+.s8-t { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 8px; }
+.s8-b { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+.s8-r { margin-top: 12px; font-size: 12px; color: var(--text-muted); border-top: 0.5px solid var(--border); padding-top: 12px; }
+
+/* S9 KEY DECISIONS */
+.kd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--dark-grid); border-radius: 12px; overflow: hidden; }
+.kd-cell { background: var(--dark-cell); padding: 1.75rem; }
+.kd-topic { font-size: 10px; font-weight: 500; letter-spacing: 0.08em; text-transform: uppercase; color: var(--dark-hint); margin-bottom: 0.85rem; }
+.kd-tension { font-size: 13px; color: var(--dark-muted); line-height: 1.5; margin-bottom: 0.85rem; padding-bottom: 0.85rem; border-bottom: 0.5px solid var(--dark-border); }
+.kd-decision { font-size: 13px; font-weight: 500; color: var(--dark-subtitle); line-height: 1.5; margin-bottom: 6px; }
+.kd-impact { font-size: 12px; color: var(--dark-body); line-height: 1.5; font-style: italic; }
+
+/* S10 GUARDRAILS */
+.legend { display: flex; gap: 1.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+.legend-item { display: flex; align-items: center; gap: 7px; font-size: 11px; color: var(--text-secondary); }
+.ldot { width: 8px; height: 8px; border-radius: 50%; }
+table.gr { width: 100%; border-collapse: collapse; }
+table.gr thead tr { border-bottom: 1px solid var(--border); }
+table.gr th { padding: 10px 14px; text-align: left; font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); }
+table.gr td { padding: 12px 14px; vertical-align: top; border-bottom: 0.5px solid #E8E4DC; line-height: 1.5; color: var(--text-secondary); font-size: 12px; }
+table.gr tr:last-child td { border-bottom: none; }
+.tp { font-weight: 500; color: var(--text-primary); }
+.lv { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 500; white-space: nowrap; }
+.lv-a { background: #F2F8F1; color: #3A6A4C; border: 0.5px solid #C4DEC0; }
+.lv-s { background: #FBF8EF; color: #7A6A2C; border: 0.5px solid #E8DFB8; }
+.lv-h { background: #FDF1F0; color: #7A3A35; border: 0.5px solid #EAC8C5; }
+.lv-o { background: #F3F2F0; color: #6A6A68; border: 0.5px solid var(--border); }
+.gr-note { margin-top: 1.5rem; font-size: 12px; font-style: italic; color: var(--text-muted); border-top: 0.5px solid var(--border); padding-top: 1.25rem; }
+
+/* S11 OVERVIEW */
+.s11-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--dark-grid); border-radius: 12px; overflow: hidden; }
+.s11-full { grid-column: 1/-1; background: var(--dark-cell); padding: 1.75rem; border-bottom: 1px solid var(--dark-grid); }
+.s11-cell { background: var(--dark-cell); padding: 1.75rem; }
+.s11-wide { grid-column: 1/-1; border-top: 1px solid var(--dark-grid); }
+.s11-tag { display: inline-block; font-size: 10px; font-weight: 500; letter-spacing: 0.06em; text-transform: uppercase; padding: 4px 10px; border-radius: 20px; margin-bottom: 0.85rem; }
+.tag-pat { background: #1F2E25; color: #5A9A6C; }
+.tag-pro { background: #1F2E3A; color: #5A8AAB; }
+.tag-coo { background: #2E2820; color: #9A7A4C; }
+.s11-t { font-size: 14px; font-weight: 500; color: var(--dark-subtitle); margin-bottom: 5px; }
+.s11-b { font-size: 12px; color: var(--dark-body); line-height: 1.6; }
+.s11-note { margin-top: 1.5rem; font-size: 12px; font-style: italic; color: var(--dark-hint); }
+
+/* S12 INTERFACE */
+.s12-details { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1px; background: var(--border); border-radius: 0 0 12px 12px; overflow: hidden; }
+.s12-det { background: var(--light); padding: 1.5rem; }
+.s12-dt { font-size: 11px; font-weight: 500; color: var(--text-muted); margin-bottom: 5px; }
+.s12-db { font-size: 12px; color: var(--text-secondary); line-height: 1.6; }
+
+/* S13 EXCEPTIONS */
+.ex-tbl { width: 100%; border-collapse: collapse; }
+.ex-hd { background: #111009; }
+.ex-th { padding: 10px 14px; text-align: left; font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: #3E3C38; border-right: 0.5px solid var(--dark-border); }
+.ex-th:last-child { border-right: none; }
+.ex-tr { border-top: 1px solid var(--dark-border); }
+.ex-trig { padding: 1.5rem; border-right: 0.5px solid var(--dark-border); vertical-align: top; width: 22%; }
+.ex-td { padding: 1.5rem; border-right: 0.5px solid var(--dark-border); vertical-align: top; font-size: 12px; color: var(--dark-body); line-height: 1.6; }
+.ex-td:last-child { border-right: none; }
+.ex-td strong { display: block; font-size: 10px; font-weight: 500; color: var(--dark-muted); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 0.06em; }
+.ex-tw { display: inline-block; font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 20px; background: #2A2518; color: #8A7A3C; border: 0.5px solid #3E3520; margin-bottom: 6px; }
+.ex-tc { display: inline-block; font-size: 10px; font-weight: 500; padding: 3px 9px; border-radius: 20px; background: #2A1818; color: #8A4A45; border: 0.5px solid #3E2020; margin-bottom: 6px; }
+.ex-tn { font-size: 14px; font-weight: 500; color: var(--dark-subtitle); margin-bottom: 4px; }
+.ex-tb { font-size: 12px; color: var(--dark-muted); line-height: 1.5; }
+.ex-note { margin-top: 1.5rem; font-size: 12px; font-style: italic; color: var(--dark-hint); border-top: 0.5px solid var(--dark-border); padding-top: 1.25rem; }
+
+/* S14 AUDIT */
+.s14-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: start; }
+.s14-ins { padding: 1.25rem 1.5rem; border-left: 2px solid var(--border); margin-bottom: 12px; }
+.s14-it { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 5px; }
+.s14-ib { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+.s14-hl { padding: 1.25rem 1.5rem; background: var(--surface); border-radius: 12px; font-size: 13px; font-style: italic; color: var(--text-secondary); line-height: 1.7; }
+
+/* S15 IMPACT */
+.s15-nums { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--dark-grid); border-radius: 12px; overflow: hidden; margin-bottom: 1.75rem; }
+.s15-num { background: var(--dark-cell); padding: 1.75rem; }
+.s15-big { font-family: var(--font-display); font-size: 48px; font-weight: 400; color: var(--dark-title); letter-spacing: -0.02em; line-height: 1; }
+.s15-unit { font-size: 11px; color: var(--dark-muted); margin-top: 8px; text-transform: uppercase; letter-spacing: 0.04em; line-height: 1.4; }
+.s15-quote { padding: 1.5rem 1.75rem; border-left: 2px solid var(--dark-hint); }
+.s15-qt { font-size: 14px; font-style: italic; color: var(--dark-body); line-height: 1.8; }
+.s15-qa { font-size: 11px; color: var(--dark-hint); margin-top: 8px; letter-spacing: 0.04em; }
+
+/* S16 LEARNINGS */
+.s16-list { border: 0.5px solid var(--border); border-radius: 12px; overflow: hidden; }
+.s16-item { display: grid; grid-template-columns: 36px 1fr; gap: 1.25rem; padding: 1.75rem; border-bottom: 0.5px solid var(--border); align-items: start; }
+.s16-item:last-child { border-bottom: none; }
+.s16-n { font-size: 13px; font-weight: 500; color: var(--border); }
+.s16-t { font-size: 14px; font-weight: 500; color: var(--text-primary); margin-bottom: 5px; }
+.s16-b { font-size: 13px; color: var(--text-secondary); line-height: 1.7; }
+.ai-callout { margin-top: 1.5rem; padding: 1.25rem 1.5rem; background: var(--surface); border-radius: 12px; display: grid; grid-template-columns: auto 1fr; gap: 1.25rem; align-items: start; }
+.ai-label { font-size: 10px; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted); white-space: nowrap; padding-top: 2px; }
+.ai-body { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+/* S17 CLOSING */
+.s17-inner { display: flex; flex-direction: column; justify-content: space-between; min-height: 260px; }
+.s17-hero { font-family: var(--font-display); font-size: 52px; font-weight: 400; color: var(--dark-title); line-height: 1.1; }
+.s17-hero em { font-style: italic; color: var(--dark-hint); }
+.s17-bottom { display: flex; justify-content: space-between; align-items: flex-end; margin-top: 3rem; }
+.s17-name { font-size: 15px; font-weight: 500; color: #C8C2B8; }
+.s17-detail { font-size: 13px; color: var(--dark-muted); margin-top: 4px; }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <span>Karyn Loreyne</span>
+  <div class="nav-dot"></div>
+  <a href="#s1">Opening</a>
+  <div class="nav-dot"></div>
+  <a href="#s5">Problem</a>
+  <div class="nav-dot"></div>
+  <a href="#s7">Principles</a>
+  <div class="nav-dot"></div>
+  <a href="#s9">Decisions</a>
+  <div class="nav-dot"></div>
+  <a href="#s11">Solution</a>
+  <div class="nav-dot"></div>
+  <a href="#s15">Impact</a>
+</nav>
+
+<div class="wrapper">
+<div class="card">
+
+  <!-- 01 OPENING -->
+  <div class="section light" id="s1">
+    <div class="section-label">01 · Opening</div>
+    <div class="s1-grid">
+      <div>
+        <div class="ey-l">Nilo · Healthcare Platform · 2024–2025</div>
+        <div class="s1-hero">Nilo Chat<br><em>+ Agentic Mode</em></div>
+        <div class="rule-l"></div>
+        <div class="s1-meta">
+          <div class="s1-mi"><div class="lbl">Role</div><div class="val">Product Designer</div></div>
+          <div class="s1-mi"><div class="lbl">Duration</div><div class="val">6 months</div></div>
+          <div class="s1-mi"><div class="lbl">Year</div><div class="val">2025</div></div>
+        </div>
+      </div>
+      <div class="ph-l" style="height:200px">hero frame here</div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- 02 THE COMPANY -->
+  <div class="section light" id="s2">
+    <div class="section-label">02 · The company</div>
+    <div class="ey-l">The company</div>
+    <div class="tt-l">Nilo — a platform for patient acquisition,<br>engagement, and digital care navigation.</div>
+    <div class="s2-main">
+      <div>
+        <div class="s2-what">
+          <div class="s2-wt">What it does</div>
+          <div class="s2-wb">Enables healthcare providers, hospitals, and clinics to deliver continuous, personalized care journeys via WhatsApp — no app install needed. On the professional side, a desktop platform centralizes patient data, history, and communication in one place.</div>
+        </div>
+        <div style="margin-top:1.25rem">
+          <div class="s2-wt" style="margin-bottom:0.6rem">Some clients</div>
+          <div class="s2-tags">
+            <div class="s2-tag">Grupo Fleury</div>
+            <div class="s2-tag">Hospital Einstein</div>
+            <div class="s2-tag">Porto Saúde</div>
+            <div class="s2-tag">Unimed</div>
+            <div class="s2-tag">HCor</div>
+            <div class="s2-tag" style="font-style:italic;color:var(--text-muted)">and others</div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="s2-wt" style="margin-bottom:0.85rem">Platform modules</div>
+        <div class="s2-mods">
+          <div class="s2-mod"><div class="s2-dot" style="background:#4A7A9B"></div><div><div class="s2-mt">Acquisition & engagement</div><div class="s2-mb">Campaigns and automated flows via WhatsApp</div></div></div>
+          <div class="s2-mod"><div class="s2-dot" style="background:#4A7A5C"></div><div><div class="s2-mt">Care navigation</div><div class="s2-mb">Scheduling, triage, care lines</div></div></div>
+          <div class="s2-mod"><div class="s2-dot" style="background:#8A7A3C"></div><div><div class="s2-mt">Data & analytics</div><div class="s2-mb">Patient hub, longitudinal history, indicators</div></div></div>
+          <div class="s2-mod"><div class="s2-dot" style="background:#6A5A8A"></div><div><div class="s2-mt">AI agents</div><div class="s2-mb">Conversational automation — including Clara</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="s2-stats">
+      <div class="s2-stat"><div class="s2-sn">+3M</div><div class="s2-sl">patients on the platform</div></div>
+      <div class="s2-stat"><div class="s2-sn">R$65M</div><div class="s2-sl">invested in AI expansion</div></div>
+      <div class="s2-stat"><div class="s2-sn">−30%</div><div class="s2-sl">claims reduction in clients</div></div>
+      <div class="s2-stat"><div class="s2-sn">5×</div><div class="s2-sl">efficiency without growing the team</div></div>
+    </div>
+    <div class="s2-callout">The <strong>Chat is Nilo's core product</strong> — the interface through which millions of patients' health data flows every single day.</div>
+  </div>
+
+  <div class="section-divider-dark"></div>
+
+  <!-- 03 MARKET -->
+  <div class="section dark" id="s3">
+    <div class="section-label">03 · Market context</div>
+    <div class="ey-d">The context</div>
+    <div class="tt-d">Healthcare in Brazil is facing<br>an impossible equation.</div>
+    <div class="s3-cols">
+      <div class="s3-block"><div class="s3-bt">The problem</div><div class="s3-bb">Demand is growing. Margins are shrinking. Payroll is the biggest cost. Scaling care means hiring more people — and that cost never stops growing.</div></div>
+      <div class="s3-block"><div class="s3-bt">Nilo's bet</div><div class="s3-bb">Use AI to break this equation. Not as an incremental improvement — as a real lever for change: grow revenue without growing the team.</div></div>
+    </div>
+    <div class="s3-hl">3.5 million patients connected. Goal: 10 million by end of 2025.</div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- 04 PRODUCT -->
+  <div class="section light" id="s4">
+    <div class="section-label">04 · The product</div>
+    <div class="ey-l">The product</div>
+    <div class="tt-l">Chat as infrastructure.<br>Three sides at once.</div>
+    <div class="s4-grid">
+      <div class="s4-nodes">
+        <div class="s4-node s4-biz">Healthcare operator / Clinic<div class="s4-sub">configures, audits, tracks agent NPS</div></div>
+        <div class="s4-arr">↓</div>
+        <div class="s4-node s4-pro">Healthcare professional<div class="s4-sub">manages conversations via desktop</div></div>
+        <div class="s4-arr">↕</div>
+        <div class="s4-node s4-pac">Patient<div class="s4-sub">receives and initiates care via WhatsApp</div></div>
+      </div>
+      <div class="ph-l" style="height:220px">WhatsApp/desktop parallel frame here</div>
+    </div>
+  </div>
+
+  <div class="section-divider-dark"></div>
+
+  <!-- 05 PROBLEM -->
+  <div class="section dark" id="s5">
+    <div class="section-label">05 · The design problem</div>
+    <div class="ey-d">The design problem</div>
+    <div class="tt-d">Three perspectives.<br>One interface not built for any of them.</div>
+    <div class="s5-grid">
+      <div class="s5-cell"><div class="s5-cn">01</div><div class="s5-ct">The business</div><div class="s5-cb">Scale care without scaling the team</div><div class="s5-cq">Speed vs. operational risk</div></div>
+      <div class="s5-cell"><div class="s5-cn">02</div><div class="s5-ct">The healthcare professional</div><div class="s5-cb">Focus on cases that actually need clinical attention</div><div class="s5-cq">"If the agent makes a mistake, who's responsible?"</div></div>
+      <div class="s5-cell"><div class="s5-cn">03</div><div class="s5-ct">The patient</div><div class="s5-cb">Fast, empathetic care — available anytime</div><div class="s5-cq">Efficiency vs. human care</div></div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- 06 DISCOVERY -->
+  <div class="section light" id="s6">
+    <div class="section-label">06 · Discovery</div>
+    <div class="ey-l">Discovery</div>
+    <div class="tt-l">The real objection wasn't<br>about functionality.</div>
+    <div class="s6-grid">
+      <div class="s6-quotes">
+        <div class="s6-quote"><div class="s6-qt">"If the agent says something wrong to a patient, who answers for that?"</div><div class="s6-qa">— Care coordinator, Grupo Fleury</div></div>
+        <div class="s6-quote"><div class="s6-qt">"How do I know what the agent is doing while I'm handling other patients?"</div><div class="s6-qa">— Nurse, Grupo Fleury</div></div>
+        <div class="ph-l" style="height:80px;margin-top:8px">research notes / Fleury visit here</div>
+      </div>
+      <div class="s6-ins">
+        <div class="s6-it">What I found</div>
+        <div class="s6-ib">The objections weren't about features. They were about accountability. This wasn't a chat UX problem — it was a trust transfer problem. That insight completely changed my approach.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider-dark"></div>
+
+  <!-- 07 DESIGN PRINCIPLES -->
+  <div class="section dark" id="s7">
+    <div class="section-label">07 · Design Principles</div>
+    <div class="ey-d">Design Principles</div>
+    <div class="tt-d">The principles behind<br>every decision I made.</div>
+    <div class="dp-list">
+      <div class="dp-item"><div class="dp-num">01</div><div><div class="dp-title">Trust is the product</div><div class="dp-origin">From: interviews with healthcare professionals</div></div><div class="dp-body">In high-stakes contexts, a technically perfect agent fails if people don't trust it. Designing for trust isn't a feature — it's the foundation.</div></div>
+      <div class="dp-item"><div class="dp-num">02</div><div><div class="dp-title">Disruption never reaches the patient</div><div class="dp-origin">From: exception flow definition</div></div><div class="dp-body">Failures, latency, and handoffs happen on the professional's interface. The patient never experiences a break — their journey stays continuous.</div></div>
+      <div class="dp-item"><div class="dp-num">03</div><div><div class="dp-title">Design for who approves, not just who uses</div><div class="dp-origin">From: understanding the coordinator's role</div></div><div class="dp-body">AI adoption in organizations depends on the people with accountability. The audit tab wasn't a product feature — it was change management.</div></div>
+      <div class="dp-item"><div class="dp-num">04</div><div><div class="dp-title">Agent transparency as a right</div><div class="dp-origin">From: tension between autonomy and control</div></div><div class="dp-body">Professionals always know when the agent is on, what it's doing, and can take over at any moment. Visibility is non-negotiable.</div></div>
+      <div class="dp-item"><div class="dp-num">05</div><div><div class="dp-title">Failure deserves the same care as the happy path</div><div class="dp-origin">From: exception flow mapping</div></div><div class="dp-body">In healthcare, failure moments are where the product proves — or loses — its reliability. Every error scenario has a specific, intentional behavior.</div></div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- 08 VALIDATION -->
+  <div class="section light" id="s8">
+    <div class="section-label">08 · Validation</div>
+    <div class="ey-l">Validation</div>
+    <div class="tt-l">From the field to the product.</div>
+    <div class="s8-grid">
+      <div class="s8-cell"><div class="s8-tag">Field visit · Fleury</div><div class="s8-t">On-site observation</div><div class="s8-b">I went in person to understand the team's real workflow. Beyond the process itself, I built trust with the lead coordinator — who became our strongest internal ally for the pilot.</div><div class="s8-r">→ She later said: "please don't turn it off"</div></div>
+      <div class="s8-cell"><div class="s8-tag">Usability testing</div><div class="s8-t">Proof of concept</div><div class="s8-b">Tested the full interface with the team: agent flow, topic summary, and audit tab. Well received overall. Main adjustment: the feedback system icon — a completely new interaction for this type of user.</div><div class="s8-r">→ One targeted fix before the Fleury pilot</div></div>
+    </div>
+  </div>
+
+  <div class="section-divider-dark"></div>
+
+  <!-- 09 KEY DECISIONS -->
+  <div class="section dark" id="s9">
+    <div class="section-label">09 · Key Decisions</div>
+    <div class="ey-d">Key Decisions</div>
+    <div class="tt-d">The hardest calls —<br>and why I made them.</div>
+    <div class="kd-grid">
+      <div class="kd-cell"><div class="kd-topic">Agent visibility</div><div class="kd-tension">Showing when the agent is responding could create friction and feel impersonal for the patient</div><div class="kd-decision">→ Full transparency for the professional, seamless experience for the patient</div><div class="kd-impact">The professional always knows. The patient never notices the seam.</div></div>
+      <div class="kd-cell"><div class="kd-topic">Audit — mandatory or optional?</div><div class="kd-tension">Mandatory creates overhead. Optional might not be used — and without it, coordinators won't approve AI</div><div class="kd-decision">→ Available and accessible, not mandatory — but designed to be irresistible</div><div class="kd-impact">Trust is built through visibility. The audit tab became the key driver of adoption.</div></div>
+      <div class="kd-cell"><div class="kd-topic">Where failure happens</div><div class="kd-tension">Showing errors to patients is transparent, but in healthcare it can cause unnecessary anxiety</div><div class="kd-decision">→ Disruption happens on the professional's interface — never on the patient's</div><div class="kd-impact">The professional gets the alert and takes over. The patient never feels the break.</div></div>
+      <div class="kd-cell"><div class="kd-topic">Who defines the guardrails</div><div class="kd-tension">Letting the client configure everything is flexible, but creates real risk in sensitive clinical situations</div><div class="kd-decision">→ Product defines the non-negotiable minimum; client configures within those limits</div><div class="kd-impact">Human life comes before operational efficiency — and that had to be coded into the product.</div></div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- 10 GUARDRAILS -->
+  <div class="section light" id="s10">
+    <div class="section-label">10 · Capabilities & guardrails</div>
+    <div class="ey-l">Capabilities & guardrails</div>
+    <div class="tt-l">Defining what the agent does —<br>and what it never does.</div>
+    <div class="legend">
+      <div class="legend-item"><div class="ldot" style="background:#3A6A4C"></div>Autonomous</div>
+      <div class="legend-item"><div class="ldot" style="background:#7A6A2C"></div>With signaling</div>
+      <div class="legend-item"><div class="ldot" style="background:#7A3A35"></div>Human immediately</div>
+      <div class="legend-item"><div class="ldot" style="background:#6A6A68"></div>Out of scope</div>
+    </div>
+    <table class="gr">
+      <thead><tr><th style="width:25%">Topic</th><th style="width:17%">Level</th><th>Agent behavior</th><th style="width:22%">Trigger</th></tr></thead>
+      <tbody>
+        <tr><td><span class="tp">Scheduling & rescheduling</span></td><td><span class="lv lv-a">Autonomous</span></td><td>Checks availability, confirms details, schedules, sends summary</td><td>—</td></tr>
+        <tr><td><span class="tp">Exam confirmation</span></td><td><span class="lv lv-a">Autonomous</span></td><td>Confirms date, time, prep instructions, and location</td><td>—</td></tr>
+        <tr><td><span class="tp">Frequently asked questions</span></td><td><span class="lv lv-a">Autonomous</span></td><td>Answers based on the operator's knowledge base</td><td>—</td></tr>
+        <tr><td><span class="tp">Mild symptom triage</span></td><td><span class="lv lv-s">With signaling</span></td><td>Collects info and suggests referral. Notifies professional in parallel</td><td>2+ symptoms or duration &gt;3 days</td></tr>
+        <tr><td><span class="tp">Patient with complex history</span></td><td><span class="lv lv-s">With signaling</span></td><td>Handles immediate topic but flags attention to professional</td><td>Active flag in patient record</td></tr>
+        <tr><td><span class="tp">Complaint or dissatisfaction</span></td><td><span class="lv lv-s">With signaling</span></td><td>Acknowledges and informs that a professional will follow up</td><td>Explicit negative tone</td></tr>
+        <tr><td><span class="tp">Emotional distress</span></td><td><span class="lv lv-h">Human immediately</span></td><td>Closes topic, transfers to professional, sends a supportive message</td><td>Any signal — no exceptions</td></tr>
+        <tr><td><span class="tp">Suicidal ideation or crisis</span></td><td><span class="lv lv-h">Human immediately</span></td><td>Transfers immediately. Never tries to handle it. Sends priority alert</td><td>Keywords + clinical context</td></tr>
+        <tr><td><span class="tp">Emergency symptoms</span></td><td><span class="lv lv-h">Human immediately</span></td><td>Directs to emergency services and transfers to on-call professional</td><td>Chest pain, breathing difficulty, stroke</td></tr>
+        <tr><td><span class="tp">Diagnosis request</span></td><td><span class="lv lv-h">Human immediately</span></td><td>Declines kindly and redirects to a consultation</td><td>Any attempt at diagnosis</td></tr>
+        <tr><td><span class="tp">Out of scope</span></td><td><span class="lv lv-o">Out of scope</span></td><td>Politely says it can't help and redirects to what it can do</td><td>Topics unrelated to health or care</td></tr>
+      </tbody>
+    </table>
+    <div class="gr-note">This wasn't a technical decision — it was a design decision. Each level became visual language in the interface.</div>
+  </div>
+
+  <div class="section-divider-dark"></div>
+
+  <!-- 11 SOLUTION OVERVIEW -->
+  <div class="section dark" id="s11">
+    <div class="section-label">11 · Solution overview</div>
+    <div class="ey-d">Solution overview</div>
+    <div class="tt-d">The full solution.<br>Four surfaces, one system.</div>
+    <div class="s11-grid">
+      <div class="s11-full"><div class="s11-tag tag-pat">Patient · WhatsApp</div><div class="s11-t">Entry point — no install, no friction</div><div class="s11-b">Reminders, campaigns, health questionnaires, and care requests — all via WhatsApp.</div></div>
+      <div class="s11-cell"><div class="s11-tag tag-pro">Professional · Desktop</div><div class="s11-t">Conversation management with agent</div><div class="s11-b">Timeline, agent identification, AI-generated summary, take-over control.</div></div>
+      <div class="s11-cell"><div class="s11-tag tag-coo">Coordinator · Desktop</div><div class="s11-t">Audit & agent control</div><div class="s11-b">Conversation history, performance reviews, Clara's NPS.</div></div>
+      <div class="s11-cell s11-wide"><div class="s11-tag" style="background:#2A1F2E;color:#8A6C9A">System · Exception flows</div><div class="s11-t">Error states & fallback</div><div class="s11-b">Latency, LLM downtime, human handoff — every scenario mapped and designed with intention.</div></div>
+    </div>
+    <div class="s11-note">The next sections go into the detail behind each design decision.</div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- 12 THE INTERFACE -->
+  <div class="section light" id="s12">
+    <div class="section-label">12 · The interface</div>
+    <div class="ey-l">The interface</div>
+    <div class="tt-l">One interface. Two worlds at once.</div>
+    <div class="ph-l" style="height:220px;border-radius:12px 12px 0 0;margin-bottom:1px;">video: WhatsApp/desktop parallel + topic summary being generated</div>
+    <div class="s12-details">
+      <div class="s12-det"><div class="s12-dt">Full transparency</div><div class="s12-db">The professional always knows when it's the agent, which topic it's handling, and can take over with one click.</div></div>
+      <div class="s12-det"><div class="s12-dt">AI-generated topic summary</div><div class="s12-db">When the agent closes a topic, it generates a summary with sentiment. Full context in seconds.</div></div>
+      <div class="s12-det"><div class="s12-dt">Model feedback loop</div><div class="s12-db">Like / Dislike / Report on every summary. Dislike triggers report. Data feeds back into the model.</div></div>
+    </div>
+  </div>
+
+  <div class="section-divider-dark"></div>
+
+  <!-- 13 EXCEPTION FLOWS -->
+  <div class="section dark" id="s13">
+    <div class="section-label">13 · Exception flows</div>
+    <div class="ey-d">Exception flows</div>
+    <div class="tt-d">Designing for failure with the same<br>care as the happy path.</div>
+    <table class="ex-tbl">
+      <thead class="ex-hd"><tr><th class="ex-th" style="width:22%">Scenario</th><th class="ex-th">What the patient sees</th><th class="ex-th">What the professional sees</th><th class="ex-th">System action</th></tr></thead>
+      <tbody>
+        <tr class="ex-tr">
+          <td class="ex-trig"><div class="ex-tw">Warning</div><div class="ex-tn">Agent latency</div><div class="ex-tb">Takes longer than expected to respond</div></td>
+          <td class="ex-td"><strong>No change</strong>Conversation stays open. No error shown — no reason to add anxiety in a healthcare context.</td>
+          <td class="ex-td"><strong>Alert in the interface</strong>"The agent is taking longer than expected." Take-over button highlighted.</td>
+          <td class="ex-td"><strong>Immediate signal</strong>Conversation flagged. Take-over control enabled with visual priority.</td>
+        </tr>
+        <tr class="ex-tr">
+          <td class="ex-trig"><div class="ex-tc">Critical</div><div class="ex-tn">LLM downtime</div><div class="ex-tb">API unavailable — agent can't respond</div></td>
+          <td class="ex-td"><strong>No change</strong>Patient is not informed about the technical failure.</td>
+          <td class="ex-td"><strong>Alert across all conversations</strong>Every conversation assigned to the agent gets flagged. Queue prioritized automatically.</td>
+          <td class="ex-td"><strong>Immediate fallback</strong>Agent removed. Conversations redistributed to available professionals or waitlist.</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="ex-note">Core principle: the patient never perceives a technical failure. The disruption happens on the professional's interface — never on the patient's experience.</div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- 14 THE AUDIT -->
+  <div class="section light" id="s14">
+    <div class="section-label">14 · The audit tab</div>
+    <div class="ey-l">The audit tab</div>
+    <div class="tt-l">Institutional trust<br>is a design problem.</div>
+    <div class="s14-grid">
+      <div class="ph-l" style="height:220px">video: coordinator navigating the audit tab</div>
+      <div>
+        <div class="s14-ins"><div class="s14-it">Why it exists</div><div class="s14-ib">Coordinators wouldn't approve AI for their clients without visibility. They're accountable to the healthcare operators — and that accountability had to be respected.</div></div>
+        <div class="s14-ins"><div class="s14-it">What it solves</div><div class="s14-ib">A structured log of everything the agent did. Reviewable conversation by conversation, with performance ratings and consolidated history.</div></div>
+        <div class="s14-hl">The client buys <strong>Clara</strong> — not "an AI agent". An assistant with a name, her own NPS, and a full auditable history.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-divider-dark"></div>
+
+  <!-- 15 IMPACT -->
+  <div class="section dark" id="s15">
+    <div class="section-label">15 · Impact</div>
+    <div class="ey-d">Pilot · Grupo Fleury · 4 months</div>
+    <div class="tt-d">The results.</div>
+    <div class="s15-nums">
+      <div class="s15-num"><div class="s15-big">96%</div><div class="s15-unit">reduction in human triage requests</div></div>
+      <div class="s15-num"><div class="s15-big">670</div><div class="s15-unit">min/day freed up for the team</div></div>
+      <div class="s15-num"><div class="s15-big">24/7</div><div class="s15-unit">continuous care — previously business hours only</div></div>
+      <div class="s15-num"><div class="s15-big">3.5M</div><div class="s15-unit">patients connected through Nilo</div></div>
+    </div>
+    <div class="s15-quote">
+      <div class="s15-qt">"We're flagging errors to help the agent improve, but please don't turn it off — it's already making our work so much easier."</div>
+      <div class="s15-qa">— Nursing team, Grupo Fleury · weeks after launch</div>
+    </div>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- 16 LEARNINGS -->
+  <div class="section light" id="s16">
+    <div class="section-label">16 · Learnings</div>
+    <div class="ey-l">Learnings</div>
+    <div class="tt-l">What this project changed<br>about how I think about design.</div>
+    <div class="s16-list">
+      <div class="s16-item"><div class="s16-n">01</div><div><div class="s16-t">In AI products, trust is the product.</div><div class="s16-b">You can have the best model in the world. If people don't trust it, the product doesn't exist. Designing for trust isn't a feature — it's the foundation everything else is built on.</div></div></div>
+      <div class="s16-item"><div class="s16-n">02</div><div><div class="s16-t">Designing for AI means designing for failure.</div><div class="s16-b">Exception flows aren't edge cases — they're where the product proves it's reliable. Latency, human handoff, and model errors deserve the same design care as the happy path.</div></div></div>
+      <div class="s16-item"><div class="s16-n">03</div><div><div class="s16-t">AI adoption is an organizational problem.</div><div class="s16-b">The audit tab wasn't a product feature — it was change management. You design for the end user, but also for the person who has to say yes to putting AI in front of patients.</div></div></div>
+    </div>
+    <div class="ai-callout">
+      <div class="ai-label">AI in my process</div>
+      <div class="ai-body">I used <strong>Figma Make</strong> for quick interface validation instead of building full prototypes. <strong>Claude and GPT</strong> for research synthesis, interview scripts, and documentation. I'm currently learning <strong>Cursor + Figma MCP</strong> to get design closer to engineering. This project also taught me something more fundamental: the difference between using AI as a tool and designing <em>for</em> AI as a material — trust, fallbacks, feedback loops, and transparency are design problems, not just engineering ones.</div>
+    </div>
+  </div>
+
+  <div class="section-divider-dark"></div>
+
+  <!-- 17 CLOSING -->
+  <div class="section dark" id="s17">
+    <div class="s17-inner">
+      <div>
+        <div class="ey-d" style="margin-bottom:1.75rem">Nilo Chat + Agentic Mode · 2025</div>
+        <div class="s17-hero">Thank you.<br><em>Questions?</em></div>
+        <div class="rule-d"></div>
+        <div class="body-d" style="max-width:400px">Happy to go deeper on any part of the project.</div>
+      </div>
+      <div class="s17-bottom">
+        <div>
+          <div class="s17-name">Karyn Loreyne</div>
+          <div class="s17-detail">Product Designer</div>
+          <div class="s17-detail" style="margin-top:5px">karynloreyne.com</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+</body>
+</html>
